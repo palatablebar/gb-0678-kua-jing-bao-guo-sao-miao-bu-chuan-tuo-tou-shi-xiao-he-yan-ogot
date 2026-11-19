@@ -12,4 +12,6 @@ def test_order_independent():
     rows=[scan(1,"ACCEPT","2026-11-02T00:00:00Z"),scan(2,"DELIVERED","2026-11-04T00:00:00Z")];assert evaluate(rows,{})==evaluate(list(reversed(rows)),{})
 def test_simultaneous_conflict():
     r=evaluate([scan(1,"ACCEPT","2026-11-02T00:00:00Z"),scan(2,"DEPART","2026-11-02T00:00:00Z")],{});assert r["quarantine"][0]["reason"]=="SIMULTANEOUS_CONFLICT"
-def test_real_group_lineage(result): assert all(len(r["_sources"])==4 for r in result["stages"][3]["rows"])
+def test_real_group_lineage(result):
+    rows=result["stages"][3]["rows"]
+    assert all(len(r["_sources"])==(5 if r["parcel"]=="0001" else 4) for r in rows)
